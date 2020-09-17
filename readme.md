@@ -8,7 +8,7 @@ npm install use-asset
 
 ## Using assets
 
-`use-asset` allows you to create single assets, which bring their own cache. This is great for preload and cache busting.
+Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
 
 ```jsx
 import React, { Suspense } from "react"
@@ -61,7 +61,7 @@ hackerNewsPost.peek(9000)
 
 ## Using hooks and global cache
 
-You can also use the `useAsset` hook, this opens up a global cache, anything you request at any time is written into it.
+You can also use the `useAsset` hook, this uses a global cache, anything you request at any time is written into it.
 
 ```jsx
 import { useAsset } from "use-asset"
