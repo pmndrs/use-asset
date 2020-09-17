@@ -34,7 +34,7 @@ function Post({ id }) {
 
 function App() {
   <Suspense fallback={null}>
-    <Post id={9000}>
+    <Post id={9000} />
   </Suspense>
 }
 ```
@@ -79,7 +79,7 @@ function Post({ id }) {
 
 function App() {
   <Suspense fallback={null}>
-    <Post id={9000}>
+    <Post id={9000} />
   </Suspense>
 }
 ```
