@@ -1,6 +1,6 @@
 A simple loading strategy for react suspense based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense).
 
-Try a simple demo here: https://codesandbox.io/s/jotai-demo-forked-ji8ky
+Try a simple demo [here](https://codesandbox.io/s/jotai-demo-forked-ji8ky).
 
 ```bash
 npm install use-asset
