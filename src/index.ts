@@ -79,7 +79,7 @@ function useAsset(fn: PromiseFn, args: any[], lifespan = 0) {
 }
 
 useAsset.clear = (...args: any[]) => clear(globalCache, ...args)
-useAsset.preload = (fn: PromiseFn, args: any[]) => handleAsset(fn, globalCache, args, lifespan, true)
+useAsset.preload = (fn: PromiseFn, args: any[], lifespan = 0) => handleAsset(fn, globalCache, args, lifespan, true)
 useAsset.peek = (...args: any[]) => globalCache.find((entry) => deepEqual(args, entry.args))
 
 export { createAsset, useAsset }
