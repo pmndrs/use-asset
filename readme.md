@@ -23,7 +23,7 @@ const hackerNewsPost = createAsset(async (resolve, reject, id) => {
   resolve(json)
 })
 
-// You can preload assets, these will be cached
+// You can preload assets, these will be executed and cached immediately
 hackerNewsPost.preload(9000)
 
 function Post({ id }) {
