@@ -66,11 +66,7 @@ You can also use the `useAsset` hook, this uses a global cache, anything you req
 ```jsx
 import { useAsset } from "use-asset"
 
-const hackerNewsPost = async (resolve, reject, id) => {
-  const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-  const json = await res.json()
-  resolve(json)
-}
+const hackerNewsPost = async (resolve, reject, id) => { /*...*/ }
 
 function Post({ id }) {
   const { by, title } = useAsset(hackerNewsPost, [id])
@@ -80,8 +76,6 @@ function Post({ id }) {
 function App() {
   <Suspense fallback={null}>
     <Post id={9000} />
-  </Suspense>
-}
 ```
 
 #### Cache busting, preview, multiple arguments, preload and peeking
