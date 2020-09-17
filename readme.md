@@ -14,13 +14,10 @@ Each asset you create comes with its own cache. When you request something from 
 import React, { Suspense } from "react"
 import { createAsset } from "use-asset"
 
-// First create an asset, it returns resolve and reject callbacks.
-// The rest of the arguments are user-provided.
-// Call resolve whenever you have obtained your result.
-const hackerNewsPost = createAsset(async (resolve, reject, id) => {
+// First create an asset, the arguments are user-provided.
+const hackerNewsPost = createAsset(async (id) => {
   const resp = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-  const json = await resp.json()
-  resolve(json)
+  return await resp.json()
 })
 
 // You can preload assets, these will be executed and cached immediately
@@ -66,7 +63,7 @@ You can also use the `useAsset` hook, this uses a global cache, anything you req
 ```jsx
 import { useAsset } from "use-asset"
 
-const hackerNewsPost = async (resolve, reject, id) => { /*...*/ }
+const hackerNewsPost = async (id) => { /*...*/ }
 
 function Post({ id }) {
   const { by, title } = useAsset(hackerNewsPost, [id])

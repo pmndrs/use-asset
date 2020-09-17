@@ -2,13 +2,13 @@ import deepEqual from 'fast-deep-equal'
 import { useMemo } from 'react'
 
 type PromiseCache = {
-  promise?: Promise<void>
+  promise: Promise<any>
   args: any[]
   error?: any
   response?: any
 }
 
-type PromiseFn = (res: (value?: unknown) => void, rej: (reason?: unknown) => void, ...args: any) => any
+type PromiseFn = (...args: any) => Promise<any>
 
 function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan = 0, preload = false) {
   for (const entry of cache) {
@@ -24,17 +24,11 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
   }
 
   // The request is new or has changed.
-  let res, rej
-  const promise = new Promise((resolve, reject) => {
-    res = resolve
-    rej = reject
-  })
-  fn((res as unknown) as (value?: unknown) => void, (rej as unknown) as (reason?: unknown) => void, ...args)
-
   const entry: PromiseCache = {
+    args,
     promise:
       // Make the promise request.
-      promise
+      fn(...args)
         .then((response) => (entry.response = response))
         .catch((e) => (entry.error = e))
         .then(() => {
@@ -45,7 +39,6 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
             }, lifespan)
           }
         }),
-    args,
   }
   cache.push(entry)
   if (!preload) throw entry.promise
