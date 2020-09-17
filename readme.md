@@ -1,4 +1,6 @@
-A simple loading strategy for react suspense based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense).
+A simple loading strategy for React Suspense based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense).
+
+Try a simple demo [here](https://codesandbox.io/s/jotai-demo-forked-ji8ky).
 
 ```bash
 npm install use-asset
@@ -6,22 +8,22 @@ npm install use-asset
 
 ## Using assets
 
-`use-asset` allows you to create single assets, which bring their own cache. This is great for preload and cache busting.
+Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
 
 ```jsx
 import React, { Suspense } from "react"
 import { createAsset } from "use-asset"
 
-// First create an asset, it hands you resolve and reject functions.
+// First create an asset, it returns resolve and reject callbacks.
 // The rest of the arguments are user-provided.
 // Call resolve whenever you have obtained your result.
-const hackerNewsPost = createAsset(async (res, rej, id) => {
-  const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-  const json = await res.json()
-  res(json)
+const hackerNewsPost = createAsset(async (resolve, reject, id) => {
+  const resp = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+  const json = await resp.json()
+  resolve(json)
 })
 
-// You can preload assets, these will be cached
+// You can preload assets, these will be executed and cached immediately
 hackerNewsPost.preload(9000)
 
 function Post({ id }) {
@@ -32,7 +34,7 @@ function Post({ id }) {
 
 function App() {
   <Suspense fallback={null}>
-    <Post id={9000}>
+    <Post id={9000} />
   </Suspense>
 }
 ```
@@ -41,7 +43,7 @@ function App() {
 
 ```jsx
 // This asset will be removed from the cache in 15 seconds
-const hackerNewsPost = createAsset(..., 15000)
+const hackerNewsPost = createAsset(fn, 15000)
 
 // Clear all cached entries
 hackerNewsPost.clear()
@@ -59,16 +61,12 @@ hackerNewsPost.peek(9000)
 
 ## Using hooks and global cache
 
-You can opt into use our hook, `useAsset`, this opens up a global cache, anything you request at any time is written into it.
+You can also use the `useAsset` hook, this uses a global cache, anything you request at any time is written into it.
 
 ```jsx
 import { useAsset } from "use-asset"
 
-const hackerNewsPost = async (res, rej, id) => {
-  const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-  const json = await res.json()
-  res(json)
-}
+const hackerNewsPost = async (resolve, reject, id) => { /*...*/ }
 
 function Post({ id }) {
   const { by, title } = useAsset(hackerNewsPost, [id])
@@ -77,20 +75,24 @@ function Post({ id }) {
 
 function App() {
   <Suspense fallback={null}>
-    <Post id={9000}>
-  </Suspense>
-}
+    <Post id={9000} />
 ```
 
-#### Cache busting and peeking
+#### Cache busting, preview, multiple arguments, preload and peeking
 
-It has the same api
+The hook has the same API as any asset:
 
 ```jsx
+// Bust cache in 15 seconds
+useAsset(fn, [9000], 15000)
 // Clear all cached entries
 useAsset.clear()
 // Clear a specific entry
 useAsset.clear(9000)
 // This will either return the value (without suspense!) or undefined
 useAsset.peek(9000)
+// Preload entries
+useAsset.preload(fn, [9000])
+// Multiple arguments
+useAsset(fn, [1, 2, 3, 4])
 ```
