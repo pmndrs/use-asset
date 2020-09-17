@@ -2,9 +2,12 @@
   <a id="cover" href="#cover"><img src="img/cover.svg" alt="This library allows you to create cached assets, which can be promises, async functions or even dynamic imports. These assets then have the ability to suspend the component in which they are read. This makes it easier to orchestrate async tasks and gives you the ability to set up fallbacks and error-handling declaratively." /></a>
 </p>
 
-![Bundle Size](https://badgen.net/bundlephobia/minzip/use-asset) [![Build Status](https://travis-ci.org/pmndrs/use-asset.svg?branch=master)](https://travis-ci.org/pmndrs/use-asset) [![npm version](https://badge.fury.io/js/use-asset.svg)](https://badge.fury.io/js/use-asset) ![npm](https://img.shields.io/npm/dt/use-asset.svg)
+[![Build Size](https://img.shields.io/bundlephobia/min/use-asset?label=bunlde%20size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=use-asset)
+[![Build Status](https://img.shields.io/travis/pmndrs/use-asset/master?style=flat&colorA=000000&colorB=000000)](https://travis-ci.org/pmndrs/use-asset)
+[![Version](https://img.shields.io/npm/v/use-asset?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
+[![Downloads](https://img.shields.io/npm/dt/use-asset.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 
-Try a simple demo [here](https://codesandbox.io/s/jotai-demo-forked-ji8ky).
+Try a simple demo [here](https://codesandbox.io/s/use-asset-demo-forked-ji8ky).
 
 ## Using assets
 
