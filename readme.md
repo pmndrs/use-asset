@@ -1,5 +1,7 @@
 A simple loading strategy for react suspense based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense).
 
+Try a simple demo here: https://codesandbox.io/s/jotai-demo-forked-ji8ky
+
 ```bash
 npm install use-asset
 ```
@@ -16,8 +18,8 @@ import { createAsset } from "use-asset"
 // The rest of the arguments are user-provided.
 // Call resolve whenever you have obtained your result.
 const hackerNewsPost = createAsset(async (res, rej, id) => {
-  const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-  const json = await res.json()
+  const resp = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+  const json = await resp.json()
   res(json)
 })
 
