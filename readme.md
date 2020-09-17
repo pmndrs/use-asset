@@ -43,7 +43,7 @@ function App() {
 
 ```jsx
 // This asset will be removed from the cache in 15 seconds
-const hackerNewsPost = createAsset(..., 15000)
+const hackerNewsPost = createAsset(fn, 15000)
 
 // Clear all cached entries
 hackerNewsPost.clear()
@@ -89,10 +89,16 @@ function App() {
 The hook has the same API as any asset:
 
 ```jsx
+// Bust cache in 15 seconds
+useAsset(fn, [9000], 15000)
 // Clear all cached entries
 useAsset.clear()
 // Clear a specific entry
 useAsset.clear(9000)
 // This will either return the value (without suspense!) or undefined
 useAsset.peek(9000)
+// Preload entries
+useAsset.preload(fn, [9000])
+// Multiple arguments
+useAsset(fn, [1, 2, 3, 4])
 ```
