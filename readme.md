@@ -67,7 +67,7 @@ You can opt into use our hook, `useAsset`, this opens up a global cache, anythin
 import { useAsset } from "use-asset"
 
 const hackerNewsPost = async (res, rej, id) => {
-  const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+  const resp = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
   const json = await res.json()
   res(json)
 }
