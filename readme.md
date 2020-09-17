@@ -84,7 +84,7 @@ function App() {
 }
 ```
 
-#### Cache busting and peeking
+#### Cache busting, preview, multiple arguments, preload and peeking
 
 The hook has the same API as any asset:
 
