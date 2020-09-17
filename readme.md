@@ -1,10 +1,10 @@
-A simple loading strategy for React Suspense based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense).
+<p align="left">
+  <a id="cover" href="#cover"><img src="img/cover.svg" alt="This library allows you to create cached assets, which can be promises, async functions or even dynamic imports. These assets then have the ability to suspend the component in which they are read. This makes it easier to orchestrate async tasks and gives you the ability to set up fallbacks and error-handling declaratively." /></a>
+</p>
+
+![Bundle Size](https://badgen.net/bundlephobia/minzip/use-asset) [![Build Status](https://travis-ci.org/pmndrs/use-asset.svg?branch=master)](https://travis-ci.org/pmndrs/use-asset) [![npm version](https://badge.fury.io/js/use-asset.svg)](https://badge.fury.io/js/use-asset) ![npm](https://img.shields.io/npm/dt/use-asset.svg)
 
 Try a simple demo [here](https://codesandbox.io/s/jotai-demo-forked-ji8ky).
-
-```bash
-npm install use-asset
-```
 
 ## Using assets
 
