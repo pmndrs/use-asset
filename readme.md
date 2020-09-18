@@ -77,7 +77,6 @@ asset.peek("/image.png")
 ```typescript
 function useAsset(fn: PromiseFn, args: any[]): any
 useAsset.lifespan = 0
-useAsset.read = (...args: any[]) => any
 useAsset.preload = (fn: PromiseFn, ...args: any[]) => void
 useAsset.clear = (...args: any[]) => void
 useAsset.peek = (...args: any[]) => any
