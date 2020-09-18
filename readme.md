@@ -68,7 +68,7 @@ asset.peek("/image.png")
 </p>
 
 <p align="left">
-  <a id="cover" href="#using-hooks-and-global-cache"><img src="img/useAsset.svg" alt="Types" /></a>
+  <a id="cover" href="#hooks-and-global-cache"><img src="img/useAsset.svg" alt="Types" /></a>
 </p>
 
 You can also use the `useAsset` hook, which is modelled after [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense). This makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
