@@ -16,7 +16,7 @@ Component A waits for the result of component B: [70908](https://codesandbox.io/
 ## Using assets
 
 ```typescript
-function createAsset(fn: PromiseFn, lifespan = 0): {
+function createAsset(promiseFn: PromiseFn, lifespan = 0): {
   read: (...args: any[]) => any;
   preload: (...args: any[]) => void;
   clear: (...args: any[]) => void;
@@ -58,7 +58,7 @@ asset.preload("/image.png")
 
 ```jsx
 // This asset will be removed from the cache in 15 seconds
-const asset = createAsset(fn, 15000)
+const asset = createAsset(promiseFn, 15000)
 // Clear all cached entries
 asset.clear()
 // Clear a specific entry
@@ -75,9 +75,9 @@ asset.peek("/image.png")
 ## Using hooks and global cache
 
 ```typescript
-function useAsset(fn: PromiseFn, args: any[]): any
+function useAsset(promiseFn: PromiseFn, args: any[]): any
 useAsset.lifespan = 0
-useAsset.preload = (fn: PromiseFn, ...args: any[]) => void
+useAsset.preload = (promiseFn: PromiseFn, ...args: any[]) => void
 useAsset.clear = (...args: any[]) => void
 useAsset.peek = (...args: any[]) => any
 ```
@@ -104,13 +104,13 @@ The hook has the same API as any asset:
 ```jsx
 // Bust cache in 15 seconds
 useAsset.lifespan = 15000
-useAsset(fn, ["/image.png"])
+useAsset(promiseFn, ["/image.png"])
 // Clear all cached entries
 useAsset.clear()
 // Clear a specific entry
 useAsset.clear("/image.png")
 // Preload entries
-useAsset.preload(fn, "/image.png")
+useAsset.preload(promiseFn, "/image.png")
 // This will either return the value (without suspense!) or undefined
 useAsset.peek("/image.png")
 ```
