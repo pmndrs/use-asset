@@ -7,12 +7,6 @@
 [![Version](https://img.shields.io/npm/v/use-asset?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 [![Downloads](https://img.shields.io/npm/dt/use-asset.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 
-This project is based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense). You can try some demos:
-
-Fetching from HackerNews: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
-
-Component A waits for the result of component B: [codesandbox](https://codesandbox.io/s/use-asset-dependency-70908)
-
 ## Using assets
 
 <p align="left">
@@ -73,7 +67,7 @@ asset.peek("/image.png")
   <a id="cover" href="#using-hooks-and-global-cache"><img src="img/useAsset.svg" alt="Types" /></a>
 </p>
 
-You can also use the `useAsset` hook, this makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
+You can also use the `useAsset` hook, which is modelled after [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense). This makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
 
 ```jsx
 import { useAsset } from "use-asset"
@@ -105,3 +99,13 @@ useAsset.preload(promiseFn, "/image.png")
 // This will either return the value (without suspense!) or undefined
 useAsset.peek("/image.png")
 ```
+
+## Recipes
+
+#### Simple data fetching
+
+Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
+
+#### Async dependencies
+
+Component A waits for the result of component B: [codesandbox](https://codesandbox.io/s/use-asset-dependency-70908)
