@@ -104,7 +104,9 @@ useAsset.preload(promiseFn, "/image.png")
 useAsset.peek("/image.png")
 ```
 
-## Recipes
+<p align="left">
+  <a id="recipes" href="#recipes"><img src="img/recipes.svg" alt="Recipes" /></a>
+</p>
 
 #### Simple data fetching
 
