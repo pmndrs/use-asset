@@ -20,8 +20,6 @@ function createAsset(promiseFn: PromiseFn, lifespan = 0): {
 
 Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
 
-You can try it out here: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
-
 ```jsx
 import React, { Suspense } from "react"
 import { createAsset } from "use-asset"
@@ -112,6 +110,10 @@ useAsset.peek("/image.png")
 ```
 
 ## Recipes
+
+#### Simple data fetching
+
+Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
 
 #### Async dependencies
 
