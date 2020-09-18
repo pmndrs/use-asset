@@ -7,10 +7,12 @@
 [![Version](https://img.shields.io/npm/v/use-asset?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 [![Downloads](https://img.shields.io/npm/dt/use-asset.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 
-## Using assets
+<p align="left">
+  <a id="async-assets" href="#async-assets"><img src="img/async-assets.svg" alt="Dealing with async assets" /></a>
+</p>
 
 <p align="left">
-  <a id="cover" href="#using-assets"><img src="img/createAsset.svg" alt="Types" /></a>
+  <a id="using-assets" href="#using-assets"><img src="img/createAsset.svg" alt="Types" /></a>
 </p>
 
 Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
@@ -61,7 +63,9 @@ asset.clear("/image.png")
 asset.peek("/image.png")
 ```
 
-## Using hooks and global cache
+<p align="left">
+  <a id="hooks-global-cache" href="#hooks-global-cache"><img src="img/hooks-global-cache.svg" alt="Hooks and global cache" /></a>
+</p>
 
 <p align="left">
   <a id="cover" href="#using-hooks-and-global-cache"><img src="img/useAsset.svg" alt="Types" /></a>
