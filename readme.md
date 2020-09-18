@@ -7,12 +7,6 @@
 [![Version](https://img.shields.io/npm/v/use-asset?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 [![Downloads](https://img.shields.io/npm/dt/use-asset.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 
-This project is based on [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense). You can try some demos:
-
-Fetching from HackerNews: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
-
-Component A waits for the result of component B: [codesandbox](https://codesandbox.io/s/use-asset-dependency-70908)
-
 ## Using assets
 
 ```typescript
@@ -25,6 +19,8 @@ function createAsset(promiseFn: PromiseFn, lifespan = 0): {
 ```
 
 Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
+
+You can try it out here: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
 
 ```jsx
 import React, { Suspense } from "react"
@@ -82,7 +78,7 @@ useAsset.clear = (...args: any[]) => void
 useAsset.peek = (...args: any[]) => any
 ```
 
-You can also use the `useAsset` hook, this makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
+You can also use the `useAsset` hook, which is modelled after [react-promise-suspense](https://github.com/vigzmv/react-promise-suspense). This makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
 
 ```jsx
 import { useAsset } from "use-asset"
@@ -114,3 +110,9 @@ useAsset.preload(promiseFn, "/image.png")
 // This will either return the value (without suspense!) or undefined
 useAsset.peek("/image.png")
 ```
+
+## Recipes
+
+#### Async dependencies
+
+Component A waits for the result of component B: [codesandbox](https://codesandbox.io/s/use-asset-dependency-70908)
