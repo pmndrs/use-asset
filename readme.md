@@ -15,14 +15,9 @@ Component A waits for the result of component B: [codesandbox](https://codesandb
 
 ## Using assets
 
-```typescript
-function createAsset(promiseFn: PromiseFn, lifespan = 0): {
-  read: (...args: any[]) => any;
-  preload: (...args: any[]) => void;
-  clear: (...args: any[]) => void;
-  peek: (...args: any[]) => any;
-}
-```
+<p align="left">
+  <a id="cover" href="#using-assets"><img src="img/createAsset.svg" alt="Types" /></a>
+</p>
 
 Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
 
@@ -74,13 +69,9 @@ asset.peek("/image.png")
 
 ## Using hooks and global cache
 
-```typescript
-function useAsset(promiseFn: PromiseFn, args: any[]): any
-useAsset.lifespan = 0
-useAsset.preload = (promiseFn: PromiseFn, ...args: any[]) => void
-useAsset.clear = (...args: any[]) => void
-useAsset.peek = (...args: any[]) => any
-```
+<p align="left">
+  <a id="cover" href="#using-hooks-and-global-cache"><img src="img/useAsset.svg" alt="Types" /></a>
+</p>
 
 You can also use the `useAsset` hook, this makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
 
