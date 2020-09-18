@@ -63,7 +63,7 @@ asset.clear()
 asset.clear("/image.png")
 ```
 
-#### Reading entries outside of suspense
+#### Peeking into entries outside of suspense
 
 ```jsx
 // This will either return the value (without suspense!) or undefined
@@ -96,7 +96,7 @@ function App() {
     <Post id={1000} />
 ```
 
-#### Cache busting, preview, preload and peeking
+#### Cache busting, preload and peeking
 
 The hook has the same API as any asset:
 
