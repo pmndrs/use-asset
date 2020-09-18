@@ -59,20 +59,21 @@ function createAsset(fn: PromiseFn, lifespan = 0) {
   const cache: PromiseCache[] = []
   return {
     read: (...args: any[]) => handleAsset(fn, cache, args, lifespan),
-    preload: (...args: any[]) => handleAsset(fn, cache, args, lifespan, true),
+    preload: (...args: any[]) => void handleAsset(fn, cache, args, lifespan, true),
     clear: (...args: any[]) => clear(cache, ...args),
-    peek: (...args: any[]) => cache.find((entry) => deepEqual(args, entry.args)),
+    peek: (...args: any[]) => cache.find((entry) => deepEqual(args, entry.args))?.response,
   }
 }
 
 let globalCache: PromiseCache[] = []
 
-function useAsset(fn: PromiseFn, args: any[], lifespan = 0) {
-  return useMemo(() => handleAsset(fn, globalCache, args, lifespan), args)
+function useAsset(fn: PromiseFn, args: any[]) {
+  return useMemo(() => handleAsset(fn, globalCache, args, useAsset.lifespan), args)
 }
 
+useAsset.lifespan = 0
 useAsset.clear = (...args: any[]) => clear(globalCache, ...args)
-useAsset.preload = (fn: PromiseFn, args: any[], lifespan = 0) => handleAsset(fn, globalCache, args, lifespan, true)
-useAsset.peek = (...args: any[]) => globalCache.find((entry) => deepEqual(args, entry.args))
+useAsset.preload = (fn: PromiseFn, ...args: any[]) => void handleAsset(fn, globalCache, args, useAsset.lifespan, true)
+useAsset.peek = (...args: any[]) => globalCache.find((entry) => deepEqual(args, entry.args))?.response
 
 export { createAsset, useAsset }

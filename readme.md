@@ -7,9 +7,22 @@
 [![Version](https://img.shields.io/npm/v/use-asset?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 [![Downloads](https://img.shields.io/npm/dt/use-asset.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/use-asset)
 
-Try a simple demo [here](https://codesandbox.io/s/use-asset-demo-forked-ji8ky).
+Try some demos:
+
+Fetching from HackerNews: [ji8ky](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
+
+Component A waits for the result of component B: [70908](https://codesandbox.io/s/use-asset-dependency-70908)
 
 ## Using assets
+
+```typescript
+function createAsset(fn: PromiseFn, lifespan = 0): {
+  read: (...args: any[]) => any;
+  preload: (...args: any[]) => void;
+  clear: (...args: any[]) => void;
+  peek: (...args: any[]) => any;
+}
+```
 
 Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
 
@@ -18,23 +31,23 @@ import React, { Suspense } from "react"
 import { createAsset } from "use-asset"
 
 // First create an asset, the arguments are user-provided.
-const hackerNewsPost = createAsset(async (id) => {
-  const resp = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-  return await resp.json()
+const asset = createAsset(async (id, version) => {
+  const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
+  return await res.json()
 })
 
 // You can preload assets, these will be executed and cached immediately
-hackerNewsPost.preload(9000)
+asset.preload(10000, "v0")
 
 function Post({ id }) {
   // Request asset, this component will now suspend
-  const { by, title } = hackerNewsPost.read(id)
+  const { by, title } = asset.read(id, "v0")
   return <div>{title} by {by}</div>
 }
 
 function App() {
   <Suspense fallback={null}>
-    <Post id={9000} />
+    <Post id={10000} />
   </Suspense>
 }
 ```
@@ -43,56 +56,60 @@ function App() {
 
 ```jsx
 // This asset will be removed from the cache in 15 seconds
-const hackerNewsPost = createAsset(fn, 15000)
-
+const asset = createAsset(fn, 15000)
 // Clear all cached entries
-hackerNewsPost.clear()
-
+asset.clear()
 // Clear a specific entry
-hackerNewsPost.clear(9000)
+asset.clear("/image.png")
 ```
 
 #### Reading entries outside of suspense
 
 ```jsx
 // This will either return the value (without suspense!) or undefined
-hackerNewsPost.peek(9000)
+asset.peek("/image.png")
 ```
 
 ## Using hooks and global cache
 
-You can also use the `useAsset` hook, this uses a global cache, anything you request at any time is written into it.
+```typescript
+function useAsset(fn: PromiseFn, args: any[]): any
+useAsset.lifespan = 0
+useAsset.read = (...args: any[]) => any
+useAsset.preload = (fn: PromiseFn, ...args: any[]) => void
+useAsset.clear = (...args: any[]) => void
+useAsset.peek = (...args: any[]) => any
+```
+
+You can also use the `useAsset` hook, this makes it possible to define assets on the spot instead of having to define them externally. They use a global cache, anything you request at any time is written into it.
 
 ```jsx
 import { useAsset } from "use-asset"
 
-const hackerNewsPost = async (id) => { /*...*/ }
-
 function Post({ id }) {
-  const { by, title } = useAsset(hackerNewsPost, [id])
+  const { by, title } = useAsset(fn, [id])
   return <div>{title} by {by}</div>
 }
 
 function App() {
   <Suspense fallback={null}>
-    <Post id={9000} />
+    <Post id={1000} />
 ```
 
-#### Cache busting, preview, multiple arguments, preload and peeking
+#### Cache busting, preview, preload and peeking
 
 The hook has the same API as any asset:
 
 ```jsx
 // Bust cache in 15 seconds
-useAsset(fn, [9000], 15000)
+useAsset.lifespan = 15000
+useAsset(fn, ["/image.png"])
 // Clear all cached entries
 useAsset.clear()
 // Clear a specific entry
-useAsset.clear(9000)
-// This will either return the value (without suspense!) or undefined
-useAsset.peek(9000)
+useAsset.clear("/image.png")
 // Preload entries
-useAsset.preload(fn, [9000])
-// Multiple arguments
-useAsset(fn, [1, 2, 3, 4])
+useAsset.preload(fn, "/image.png")
+// This will either return the value (without suspense!) or undefined
+useAsset.peek("/image.png")
 ```
