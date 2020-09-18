@@ -30,17 +30,12 @@ Each asset you create comes with its own cache. When you request something from 
 import React, { Suspense } from "react"
 import { createAsset } from "use-asset"
 
-// First create an asset, the arguments are user-provided.
 const asset = createAsset(async (id, version) => {
   const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
   return await res.json()
 })
 
-// You can preload assets, these will be executed and cached immediately
-asset.preload(10000, "v0")
-
 function Post({ id }) {
-  // Request asset, this component will now suspend
   const { by, title } = asset.read(id, "v0")
   return <div>{title} by {by}</div>
 }
@@ -50,6 +45,13 @@ function App() {
     <Post id={10000} />
   </Suspense>
 }
+```
+
+#### Preloading assets
+
+```jsx
+// You can preload assets, these will be executed and cached immediately
+asset.preload("/image.png")
 ```
 
 #### Cache busting strategies
