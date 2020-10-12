@@ -14,6 +14,8 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
   for (const entry of cache) {
     // Find a match
     if (deepEqual(args, entry.args)) {
+      // If we're pre-loading and the element is present, just return
+      if (preload) return
       // If an error occurred, throw
       if (entry.error) throw entry.error
       // If a response was successful, return
