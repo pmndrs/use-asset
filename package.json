@@ -1,7 +1,7 @@
 {
   "name": "use-asset",
   "version": "0.1.2",
-  "description": "",
+  "description": "A data fetching strategy for React Suspense",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,6 +14,8 @@
   ],
   "author": "Paul Henschel",
   "license": "MIT",
+  "repository": "pmndrs/use-asset",
+  "homepage": "https://github.com/pmndrs/use-asset#readme",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
