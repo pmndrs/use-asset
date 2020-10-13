@@ -114,7 +114,7 @@ Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asse
 
 #### Infinite load on scroll
 
-Fetching HN posts infinitely: https://codesandbox.io/s/use-asset-forked-ouzkc
+Fetching HN posts infinitely: [codesandbox](https://codesandbox.io/s/use-asset-forked-ouzkc)
 
 #### Async dependencies
 
