@@ -15,19 +15,19 @@
   <a id="using-assets" href="#using-assets"><img src="img/createAsset.svg" alt="Types" /></a>
 </p>
 
-Each asset you create comes with its own cache. When you request something from it, the arguments that you pass will act as cache-keys. If you request later on using the same keys, it won't have to re-fetch but serves the result that it already knows.
+Each asset you create comes with its own cache. When you request something from it, the argument that you pass will act as cache-key. If you request later on using the same key, it won't have to re-fetch but serves the result that it already knows.
 
 ```jsx
 import React, { Suspense } from "react"
 import { createAsset } from "use-asset"
 
-const asset = createAsset(async (id, version) => {
-  const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
+const asset = createAsset(async (id) => {
+  const res = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
   return await res.json()
 })
 
 function Post({ id }) {
-  const { by, title } = asset.read(id, "v0")
+  const { by, title } = asset.read(id)
   return <div>{title} by {by}</div>
 }
 
@@ -38,29 +38,47 @@ function App() {
 }
 ```
 
+#### Customizing equality
+
+If you use an object for the argument, you need to keep ref equality or provide a custom equality function.
+
+The default equality function is `Object.is`.
+
+```js
+const asset = createAsset(async ({ id, version }) => {
+  const res = await fetch(`https://hacker-news.firebaseio.com/${version}/item/${id}.json`)
+  return await res.json()
+}, (a, b) => (a.id === b.id && a.version === b.version))
+
+function Post({ id }) {
+  const { by, title } = asset.read({ id, version: "v0" })
+  return <div>{title} by {by}</div>
+}
+```
+
 #### Preloading assets
 
 ```jsx
 // You can preload assets, these will be executed and cached immediately
-asset.preload("/image.png")
+asset.preload("1234")
 ```
 
 #### Cache busting strategies
 
 ```jsx
 // This asset will be removed from the cache in 15 seconds
-const asset = createAsset(promiseFn, 15000)
+const asset = createAsset(promiseFn, undefined, 15000)
 // Clear all cached entries
 asset.clear()
 // Clear a specific entry
-asset.clear("/image.png")
+asset.clear("1234")
 ```
 
 #### Peeking into entries outside of suspense
 
 ```jsx
 // This will either return the value (without suspense!) or undefined
-asset.peek("/image.png")
+asset.peek("1234")
 ```
 
 <p align="left">
@@ -77,7 +95,7 @@ You can also use the `useAsset` hook, which is modelled after [react-promise-sus
 import { useAsset } from "use-asset"
 
 function Post({ id }) {
-  const { by, title } = useAsset(fn, [id])
+  const { by, title } = useAsset(fn, id)
   return <div>{title} by {by}</div>
 }
 
@@ -91,17 +109,19 @@ function App() {
 The hook has the same API as any asset:
 
 ```jsx
+// custom equality function
+useAsset.areEqual = deepEqual
 // Bust cache in 15 seconds
 useAsset.lifespan = 15000
-useAsset(promiseFn, ["/image.png"])
+useAsset(promiseFn, { path: "/image.png" })
 // Clear all cached entries
 useAsset.clear()
 // Clear a specific entry
-useAsset.clear("/image.png")
+useAsset.clear({ path: "/image.png" })
 // Preload entries
-useAsset.preload(promiseFn, "/image.png")
+useAsset.preload(promiseFn, { path: "/image.png" })
 // This will either return the value (without suspense!) or undefined
-useAsset.peek("/image.png")
+useAsset.peek({ path: "/image.png" })
 ```
 
 <p align="left">
