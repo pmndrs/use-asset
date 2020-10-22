@@ -1,19 +1,42 @@
-import deepEqual from 'fast-deep-equal'
-import { useMemo } from 'react'
+import { useRef } from 'react'
 
-type PromiseCache = {
-  promise: Promise<any>
-  args: any[]
+type PromiseCache<Arg, Response> = {
+  promise: Promise<void>
+  arg: Arg
   error?: any
-  response?: any
+  response?: Response
 }
 
-type PromiseFn = (...args: any) => Promise<any>
+type PromiseFn<Arg, Response> = (arg: Arg) => Promise<Response>
 
-function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan = 0, preload = false) {
+function handleAsset<Arg, Response>(
+  fn: PromiseFn<Arg, Response>,
+  cache: PromiseCache<Arg, Response>[],
+  areEqual: (a: Arg, b: Arg) => boolean,
+  arg: Arg,
+  lifespan: number,
+  preload: true
+): void
+
+function handleAsset<Arg, Response>(
+  fn: PromiseFn<Arg, Response>,
+  cache: PromiseCache<Arg, Response>[],
+  areEqual: (a: Arg, b: Arg) => boolean,
+  arg: Arg,
+  lifespan: number
+): Response
+
+function handleAsset<Arg, Response>(
+  fn: PromiseFn<Arg, Response>,
+  cache: PromiseCache<Arg, Response>[],
+  areEqual: (a: Arg, b: Arg) => boolean,
+  arg: Arg,
+  lifespan: number,
+  preload = false
+) {
   for (const entry of cache) {
     // Find a match
-    if (deepEqual(args, entry.args)) {
+    if (areEqual(arg, entry.arg)) {
       // If we're pre-loading and the element is present, just return
       if (preload) return
       // If an error occurred, throw
@@ -26,11 +49,11 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
   }
 
   // The request is new or has changed.
-  const entry: PromiseCache = {
-    args,
+  const entry: PromiseCache<Arg, Response> = {
+    arg,
     promise:
       // Make the promise request.
-      fn(...args)
+      fn(arg)
         .then((response) => (entry.response = response))
         .catch((e) => (entry.error = e))
         .then(() => {
@@ -46,10 +69,10 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
   if (!preload) throw entry.promise
 }
 
-function clear(cache: PromiseCache[], ...args: any[]) {
-  if (args === undefined) cache.splice(0, cache.length)
+function clear<Arg, Response>(cache: PromiseCache<Arg, Response>[], areEqual: (a: Arg, b: Arg) => boolean, arg?: Arg) {
+  if (arg === undefined) cache.splice(0, cache.length)
   else {
-    const entry = cache.find((entry) => deepEqual(args, entry.args))
+    const entry = cache.find((entry) => areEqual(arg, entry.arg))
     if (entry) {
       const index = cache.indexOf(entry)
       if (index !== -1) cache.splice(index, 1)
@@ -57,25 +80,38 @@ function clear(cache: PromiseCache[], ...args: any[]) {
   }
 }
 
-function createAsset(fn: PromiseFn, lifespan = 0) {
-  const cache: PromiseCache[] = []
+function createAsset<Arg, Response>(
+  fn: PromiseFn<Arg, Response>,
+  areEqual: (a: Arg, b: Arg) => boolean = Object.is,
+  lifespan = 0
+) {
+  const cache: PromiseCache<Arg, Response>[] = []
   return {
-    read: (...args: any[]) => handleAsset(fn, cache, args, lifespan),
-    preload: (...args: any[]) => void handleAsset(fn, cache, args, lifespan, true),
-    clear: (...args: any[]) => clear(cache, ...args),
-    peek: (...args: any[]) => cache.find((entry) => deepEqual(args, entry.args))?.response,
+    read: (arg: Arg) => handleAsset(fn, cache, areEqual, arg, lifespan),
+    preload: (arg: Arg) => handleAsset(fn, cache, areEqual, arg, lifespan, true),
+    clear: (arg?: Arg) => clear(cache, areEqual, arg),
+    peek: (arg: Arg) => cache.find((entry) => areEqual(arg, entry.arg))?.response,
   }
 }
 
-let globalCache: PromiseCache[] = []
+let globalCache: PromiseCache<any, any>[] = []
 
-function useAsset(fn: PromiseFn, args: any[]) {
-  return useMemo(() => handleAsset(fn, globalCache, args, useAsset.lifespan), args)
+function useAsset<Arg, Response>(fn: PromiseFn<Arg, Response>, arg: Arg) {
+  const ref = useRef<{ arg: Arg; res: Response }>()
+  if (!ref.current || !useAsset.areEqual(ref.current.arg, arg)) {
+    ref.current = {
+      arg,
+      res: handleAsset(fn, globalCache, useAsset.areEqual, arg, useAsset.lifespan),
+    }
+  }
+  return ref.current.res
 }
 
+useAsset.areEqual = Object.is as <Arg>(a: Arg, b: Arg) => boolean
 useAsset.lifespan = 0
-useAsset.clear = (...args: any[]) => clear(globalCache, ...args)
-useAsset.preload = (fn: PromiseFn, ...args: any[]) => void handleAsset(fn, globalCache, args, useAsset.lifespan, true)
-useAsset.peek = (...args: any[]) => globalCache.find((entry) => deepEqual(args, entry.args))?.response
+useAsset.clear = <Arg>(arg?: Arg) => clear(globalCache, useAsset.areEqual, arg)
+useAsset.preload = <Arg, Response>(fn: PromiseFn<Arg, Response>, arg: Arg) =>
+  handleAsset(fn, globalCache, useAsset.areEqual, arg, useAsset.lifespan, true)
+useAsset.peek = <Arg>(arg: Arg) => globalCache.find((entry) => useAsset.areEqual(arg, entry.arg))?.response
 
 export { createAsset, useAsset }
