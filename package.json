@@ -61,8 +61,6 @@
     "typescript": "^3.9.7"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
-    "react-three-fiber": "^4.2.20",
-    "three": "^0.119.1"
+    "react": ">=16.13"
   }
 }
