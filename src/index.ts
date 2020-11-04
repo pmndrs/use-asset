@@ -31,7 +31,9 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
     promise:
       // Make the promise request.
       fn(...args)
-        .then((response) => (entry.response = response))
+        // Response can't be undefined or else the loop above wouldn't be able to return it
+        // This is for promises that do not return results (delays for instance)
+        .then((response) => (entry.response = response ?? true))
         .catch((e) => (entry.error = e))
         .then(() => {
           if (lifespan > 0) {
