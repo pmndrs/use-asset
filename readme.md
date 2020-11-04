@@ -112,6 +112,10 @@ useAsset.peek("/image.png")
 
 Fetching posts from hacker-news: [codesandbox](https://codesandbox.io/s/use-asset-demo-forked-ji8ky)
 
+#### Infinite load on scroll
+
+Fetching HN posts infinitely: [codesandbox](https://codesandbox.io/s/use-asset-forked-ouzkc)
+
 #### Async dependencies
 
 Component A waits for the result of component B: [codesandbox](https://codesandbox.io/s/use-asset-dependency-70908)
