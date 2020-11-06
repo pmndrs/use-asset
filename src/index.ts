@@ -59,13 +59,17 @@ function clear(cache: PromiseCache[], ...args: any[]) {
   }
 }
 
-function createAsset(fn: PromiseFn, lifespan = 0) {
+function createAsset<T>(fn: PromiseFn, lifespan = 0) {
   const cache: PromiseCache[] = []
   return {
-    read: (...args: any[]) => handleAsset(fn, cache, args, lifespan),
-    preload: (...args: any[]) => void handleAsset(fn, cache, args, lifespan, true),
+    /**
+     * @throws Suspense Promise if asset is not yet ready
+     * @throws Error if the promise rejected for some reason 
+     */
+    read: (...args: any[]): T => handleAsset(fn, cache, args, lifespan),
+    preload: (...args: any[]): void => void handleAsset(fn, cache, args, lifespan, true),
     clear: (...args: any[]) => clear(cache, ...args),
-    peek: (...args: any[]) => cache.find((entry) => deepEqual(args, entry.args))?.response,
+    peek: (...args: any[]): void | T => cache.find((entry) => deepEqual(args, entry.args))?.response,
   }
 }
 
