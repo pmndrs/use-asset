@@ -64,7 +64,7 @@ function createAsset<T>(fn: PromiseFn, lifespan = 0) {
   return {
     /**
      * @throws Suspense Promise if asset is not yet ready
-     * @throws Error if the promise rejected for some reason 
+     * @throws Error if the promise rejected for some reason
      */
     read: (...args: any[]): T => handleAsset(fn, cache, args, lifespan),
     preload: (...args: any[]): void => void handleAsset(fn, cache, args, lifespan, true),
@@ -76,7 +76,7 @@ function createAsset<T>(fn: PromiseFn, lifespan = 0) {
 let globalCache: PromiseCache[] = []
 
 function useAsset(fn: PromiseFn, args: any[]) {
-  return useMemo(() => handleAsset(fn, globalCache, args, useAsset.lifespan), args)
+  return useMemo(() => fn && handleAsset(fn, globalCache, args, useAsset.lifespan), args)
 }
 
 useAsset.lifespan = 0
