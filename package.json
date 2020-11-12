@@ -1,6 +1,6 @@
 {
   "name": "use-asset",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A data fetching strategy for React Suspense",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -32,9 +32,7 @@
     "prepublishOnly": "npm run build",
     "test": "echo no tests yet"
   },
-  "dependencies": {
-    "fast-deep-equal": "^3.1.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "7.11.0",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
