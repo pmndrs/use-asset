@@ -1,19 +1,27 @@
-import deepEqual from 'fast-deep-equal'
 import { useMemo } from 'react'
 
-type PromiseCache = {
-  promise: Promise<any>
-  args: any[]
+type PromiseCache<Response, Args extends any[]> = {
+  promise: Promise<void>
+  args: Args
   error?: any
-  response?: any
+  response?: Response
 }
 
-type PromiseFn = (...args: any) => Promise<any>
+type PromiseFn<Response, Args extends any[]> = (...args: Args) => Promise<Response>
 
-function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan = 0, preload = false) {
+const globalCache: PromiseCache<any, any[]>[] = []
+const equal = (a: any[], b: any[]) => a.length === b.length && a.every((arg, index) => arg === b[index])
+
+function handleAsset<Response, Args extends any[]>(
+  fn: PromiseFn<Response, Args>,
+  cache: PromiseCache<Response, Args>[],
+  args: Args,
+  lifespan = 0,
+  preload = false
+) {
   for (const entry of cache) {
     // Find a match
-    if (deepEqual(args, entry.args)) {
+    if (equal(args, entry.args)) {
       // If we're pre-loading and the element is present, just return
       if (preload) return
       // If an error occurred, throw
@@ -26,14 +34,14 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
   }
 
   // The request is new or has changed.
-  const entry: PromiseCache = {
+  const entry: PromiseCache<Response, Args> = {
     args,
     promise:
       // Make the promise request.
       fn(...args)
         // Response can't be undefined or else the loop above wouldn't be able to return it
         // This is for promises that do not return results (delays for instance)
-        .then((response) => (entry.response = response ?? true))
+        .then((response) => (entry.response = (response ?? true) as Response))
         .catch((e) => (entry.error = e))
         .then(() => {
           if (lifespan > 0) {
@@ -48,10 +56,10 @@ function handleAsset(fn: PromiseFn, cache: PromiseCache[], args: any[], lifespan
   if (!preload) throw entry.promise
 }
 
-function clear(cache: PromiseCache[], ...args: any[]) {
+function clear<Response, Args extends any[]>(cache: PromiseCache<Response, Args>[], ...args: Args) {
   if (args === undefined) cache.splice(0, cache.length)
   else {
-    const entry = cache.find((entry) => deepEqual(args, entry.args))
+    const entry = cache.find((entry) => equal(args, entry.args))
     if (entry) {
       const index = cache.indexOf(entry)
       if (index !== -1) cache.splice(index, 1)
@@ -59,29 +67,32 @@ function clear(cache: PromiseCache[], ...args: any[]) {
   }
 }
 
-function createAsset<T>(fn: PromiseFn, lifespan = 0) {
-  const cache: PromiseCache[] = []
+function createAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>, lifespan = 0) {
+  const cache: PromiseCache<Response, Args>[] = []
   return {
     /**
      * @throws Suspense Promise if asset is not yet ready
      * @throws Error if the promise rejected for some reason
      */
-    read: (...args: any[]): T => handleAsset(fn, cache, args, lifespan),
-    preload: (...args: any[]): void => void handleAsset(fn, cache, args, lifespan, true),
-    clear: (...args: any[]) => clear(cache, ...args),
-    peek: (...args: any[]): void | T => cache.find((entry) => deepEqual(args, entry.args))?.response,
+    read: (...args: Args): Response => handleAsset(fn, cache, args, lifespan) as Response,
+    preload: (...args: Args): void => void handleAsset(fn, cache, args, lifespan, true),
+    clear: (...args: Args) => clear(cache, ...args),
+    peek: (...args: Args): void | Response => cache.find((entry) => equal(args, entry.args))?.response,
   }
 }
 
-let globalCache: PromiseCache[] = []
-
-function useAsset(fn: PromiseFn, args: any[]) {
-  return useMemo(() => fn && handleAsset(fn, globalCache, args, useAsset.lifespan), args)
+function useAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>, args: Args): Response {
+  return useMemo(
+    () => handleAsset(fn, globalCache as PromiseCache<Response, Args>[], args, useAsset.lifespan),
+    args
+  ) as Response
 }
 
 useAsset.lifespan = 0
-useAsset.clear = (...args: any[]) => clear(globalCache, ...args)
-useAsset.preload = (fn: PromiseFn, ...args: any[]) => void handleAsset(fn, globalCache, args, useAsset.lifespan, true)
-useAsset.peek = (...args: any[]) => globalCache.find((entry) => deepEqual(args, entry.args))?.response
+useAsset.clear = <Args extends any[]>(...args: Args) => clear(globalCache, ...args)
+useAsset.preload = <Response, Args extends any[]>(fn: PromiseFn<Response, Args>, ...args: Args) =>
+  void handleAsset(fn, globalCache as PromiseCache<Response, Args>[], args, useAsset.lifespan, true)
+useAsset.peek = <Response, Args extends any[]>(...args: Args) =>
+  globalCache.find((entry) => equal(args, entry.args))?.response as Response
 
 export { createAsset, useAsset }
