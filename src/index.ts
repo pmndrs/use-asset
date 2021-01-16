@@ -81,7 +81,7 @@ function createAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>
   }
 }
 
-function useAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>, args: Args): Response {
+function useAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>, ...args: Args): Response {
   return useMemo(
     () => handleAsset(fn, globalCache as PromiseCache<Response, Args>[], args, useAsset.lifespan),
     args

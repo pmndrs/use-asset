@@ -77,7 +77,7 @@ You can also use the `useAsset` hook, which is modelled after [react-promise-sus
 import { useAsset } from "use-asset"
 
 function Post({ id }) {
-  const { by, title } = useAsset(fn, [id])
+  const { by, title } = useAsset(fn, id)
   return <div>{title} by {by}</div>
 }
 
@@ -93,7 +93,7 @@ The hook has the same API as any asset:
 ```jsx
 // Bust cache in 15 seconds
 useAsset.lifespan = 15000
-useAsset(promiseFn, ["/image.png"])
+useAsset(promiseFn, "/image.png")
 // Clear all cached entries
 useAsset.clear()
 // Clear a specific entry
