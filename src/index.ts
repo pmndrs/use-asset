@@ -10,7 +10,13 @@ type PromiseCache<Response, Args extends any[]> = {
 type PromiseFn<Response, Args extends any[]> = (...args: Args) => Promise<Response>
 
 const globalCache: PromiseCache<any, any[]>[] = []
-const equal = (a: any[], b: any[]) => a.length === b.length && a.every((arg, index) => arg === b[index])
+const deepEqual = (a: any[], b: any[]): boolean =>
+  a === b ||
+  (a.length === b.length &&
+    a.every((arg, index) => {
+      if (Array.isArray(arg) && Array.isArray(b[index])) return deepEqual(arg, b[index])
+      else return arg === b[index]
+    }))
 
 function handleAsset<Response, Args extends any[]>(
   fn: PromiseFn<Response, Args>,
@@ -21,7 +27,7 @@ function handleAsset<Response, Args extends any[]>(
 ) {
   for (const entry of cache) {
     // Find a match
-    if (equal(args, entry.args)) {
+    if (deepEqual(args, entry.args)) {
       // If we're pre-loading and the element is present, just return
       if (preload) return
       // If an error occurred, throw
@@ -59,7 +65,7 @@ function handleAsset<Response, Args extends any[]>(
 function clear<Response, Args extends any[]>(cache: PromiseCache<Response, Args>[], ...args: Args) {
   if (args === undefined) cache.splice(0, cache.length)
   else {
-    const entry = cache.find((entry) => equal(args, entry.args))
+    const entry = cache.find((entry) => deepEqual(args, entry.args))
     if (entry) {
       const index = cache.indexOf(entry)
       if (index !== -1) cache.splice(index, 1)
@@ -77,7 +83,7 @@ function createAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>
     read: (...args: Args): Response => handleAsset(fn, cache, args, lifespan) as Response,
     preload: (...args: Args): void => void handleAsset(fn, cache, args, lifespan, true),
     clear: (...args: Args) => clear(cache, ...args),
-    peek: (...args: Args): void | Response => cache.find((entry) => equal(args, entry.args))?.response,
+    peek: (...args: Args): void | Response => cache.find((entry) => deepEqual(args, entry.args))?.response,
   }
 }
 
@@ -93,6 +99,6 @@ useAsset.clear = <Args extends any[]>(...args: Args) => clear(globalCache, ...ar
 useAsset.preload = <Response, Args extends any[]>(fn: PromiseFn<Response, Args>, ...args: Args) =>
   void handleAsset(fn, globalCache as PromiseCache<Response, Args>[], args, useAsset.lifespan, true)
 useAsset.peek = <Response, Args extends any[]>(...args: Args) =>
-  globalCache.find((entry) => equal(args, entry.args))?.response as Response
+  globalCache.find((entry) => deepEqual(args, entry.args))?.response as Response
 
 export { createAsset, useAsset }
