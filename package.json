@@ -1,6 +1,6 @@
 {
   "name": "use-asset",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A data fetching strategy for React Suspense",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
