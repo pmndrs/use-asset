@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import deepEqual from 'fast-deep-equal'
 
 type PromiseCache<Response, Args extends any[]> = {
   promise: Promise<void>
@@ -10,13 +11,6 @@ type PromiseCache<Response, Args extends any[]> = {
 type PromiseFn<Response, Args extends any[]> = (...args: Args) => Promise<Response>
 
 const globalCache: PromiseCache<any, any[]>[] = []
-const deepEqual = (a: any[], b: any[]): boolean =>
-  a === b ||
-  (a.length === b.length &&
-    a.every((arg, index) => {
-      if (Array.isArray(arg) && Array.isArray(b[index])) return deepEqual(arg, b[index])
-      else return arg === b[index]
-    }))
 
 function handleAsset<Response, Args extends any[]>(
   fn: PromiseFn<Response, Args>,
@@ -48,7 +42,7 @@ function handleAsset<Response, Args extends any[]>(
         // Response can't be undefined or else the loop above wouldn't be able to return it
         // This is for promises that do not return results (delays for instance)
         .then((response) => (entry.response = (response ?? true) as Response))
-        .catch((e) => (entry.error = e))
+        .catch((e) => (entry.error = e ?? 'unknown error'))
         .then(() => {
           if (lifespan > 0) {
             setTimeout(() => {
