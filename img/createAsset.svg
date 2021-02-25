@@ -1,4 +1,5 @@
 <svg width="5412" height="870" viewBox="0 0 5412 870" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="100%" height="100%" fill="white" />
 <rect width="5412" height="870" rx="50" fill="#1F2127"/>
 <text fill="#E8E8E8" xml:space="preserve" style="white-space: pre" font-family="SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace" font-size="90" letter-spacing="0em"><tspan x="1240.8" y="189.157">promiseFn</tspan><tspan x="2433.83" y="189.157">lifespan</tspan><tspan x="210.457" y="297.157">read</tspan><tspan x="590.057" y="297.157">...args</tspan><tspan x="210.457" y="405.157">preload</tspan><tspan x="752.742" y="405.157">...args</tspan><tspan x="210.457" y="513.157">clear</tspan><tspan x="644.285" y="513.157">...args</tspan><tspan x="210.457" y="621.157">peek</tspan><tspan x="590.057" y="621.157">...args</tspan></text>
 <text fill="#DD6868" xml:space="preserve" style="white-space: pre" font-family="SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace" font-size="90" letter-spacing="0em"><tspan x="590.057" y="189.157">createAsset</tspan></text>
