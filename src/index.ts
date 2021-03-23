@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import deepEqual from 'fast-deep-equal'
 
 type PromiseCache<Response, Args extends any[]> = {
@@ -82,10 +81,7 @@ function createAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>
 }
 
 function useAsset<Response, Args extends any[]>(fn: PromiseFn<Response, Args>, ...args: Args): Response {
-  return useMemo(
-    () => handleAsset(fn, globalCache as PromiseCache<Response, Args>[], args, useAsset.lifespan),
-    args
-  ) as Response
+  return handleAsset(fn, globalCache as PromiseCache<Response, Args>[], args, useAsset.lifespan) as Response
 }
 
 useAsset.lifespan = 0
