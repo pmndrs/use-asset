@@ -56,7 +56,7 @@ function handleAsset<Response, Args extends any[]>(
 }
 
 function clear<Response, Args extends any[]>(cache: PromiseCache<Response, Args>[], ...args: Args) {
-  if (args === undefined) cache.splice(0, cache.length)
+  if (args === undefined || args.length === 0) cache.splice(0, cache.length)
   else {
     const entry = cache.find((entry) => deepEqual(args, entry.args))
     if (entry) {
